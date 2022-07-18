@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link href="/emoji/css/tools.css" rel="stylesheet" />
+<link href="/emoji/css/emojibg.css" rel="stylesheet" />
+<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+
+<style>
+    
+    body{
+        background-color: rgb(195, 183, 235);
+    }
+    .box{
+        width: 60%;
+        margin: 100px auto;
+        height: 600px;
+        border: 2px solid green;
+        position: relative;
+        background-color: aliceblue;
+        
+    }
+    .box .shuru{
+        position: absolute;
+        background-color: rgb(230, 137, 16);
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 2% 2%;
+        box-sizing: border-box;
+        
+        /* overflow: hidden; */
+    }
+    .box .shuru textarea{
+        width: 100%;
+        height: 100%;
+        background-color: rgb(228, 172, 108);
+        position: absolute;
+        bottom: 0;
+    }
+    .box .shuru a{
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+    }
+    .kuang{
+        display: none;
+    }
+    .me{
+        
+        width: 100%;
+        background-color: antiquewhite;
+        height: 50px;
+    }
+    .me span{
+        float: right;
+    }
+    .other{
+        
+        width: 100%;
+        background-color: aqua;
+        height: 50px;
+    }
+    .other span{
+        float: left;
+    }
+    .jinru{
+        width: 100%;
+        text-align: center;
+    }
+
+    .user{
+        position: absolute;
+        left: 35%;
+        top: 20px;
+    }
+    h2{
+        font-size: 60px;
+        position: absolute;
+        left: 50%;
+        top: 10px;
+    }
+
+    #openFace{
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        z-index: 10;
+    }
+</style>
+<body>
+    <div class="user">
+        <a href="/login" class="btn btn-primary">登录</a>
+        <a href="/regist" class="btn btn-primary">注册</a>
+        <a href="/out" class="btn btn-primary">退出</a><br>
+        <p>当前用户:</p>
+
+    </div>
+    <h2>聊天室</h2>
+
+
+    <div class="box">
+        <div class="top">
+
+        </div>
+        <!-- 聊天框 -->
+        <div class="kuang">
+            <div class="me">
+                <span class="myname">我名字</span>
+                <span class="mytext">我的内容</span>
+                
+            </div>
+            <div class="other">
+                <span class="othername">他人名字</span>
+                <span class="othertext">他人的内容</span>     
+            </div>
+            <div class="jinru">
+                
+                  
+            </div>
+        </div>
+        <!-- 输入框 -->
+        <div class="shuru">
+
+            
+                <img src="/emoji/emoji/icon.png" id="openFace" title="添加表情">
+                <textarea id="textarea"></textarea>
+            
+            <div class="faceDivBox" style="width:400px;height:580px;display:none;">
+                <div class="faceDiv" style="height:580px;">
+                    <section class="emoji-box"></section>
+                    <div class="tabbox">
+                        <section class="emoji-tab"></section>
+                    </div>
+                </div>
+                <a class="closeFaceBox" href="javascript:void(0)">×</a>
+            </div>
+
+            <!-- <textarea></textarea> -->
+            <a href="javascript:void(0)" class="btn btn-success sub">提交</a>
+        </div>
+    </div>
+    
+           
+    
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/emoji/js/emojisort.js"></script> 
+<script type="text/javascript" src="/emoji/js/emoji.js"></script>
+<script>
+    
+    let socket=io.connect('/')
+    let name=document.cookie.substring(6)
+    $('.sub').on('click',function(){
+        
+        let v=$('textarea').val()
+        
+        if(v==''){
+            return
+        }
+        let me=$('.kuang .me').clone()
+        me.find('.myname').html(':'+name)
+        me.find('.mytext').html(v)
+        $('.top').append(me)
+        socket.emit('home',{name:name,data:v})
+        $('textarea').val('')
+        
+    })
+
+    
+    socket.on('home',data=>{
+        console.log(data);
+        let other=$('.kuang .other').clone()
+        other.find('.othertext').html(data.data)
+        other.find('.othername').html(data.name+':')
+        $('.top').append(other)
+
+        
+
+    })
+    socket.on('laile',data=>{
+        let jinru=$('.kuang .jinru').clone()
+        jinru.html(data.name+'进入房间')
+        $('.top').append(jinru)
+    })
+
+
+    //当前用户
+    if(document.cookie==''){
+        $('.user p').html('无用户登录（登录后才能发言）')
+        $('textarea').attr('disabled',true)
+        $('textarea').val('请登录后发言!!!!!!!请登录后发言!!!!!!!!!!!!')
+    }else{
+        $('.user p').html('当前用户：'+document.cookie.substring(6))
+        let jinru=$('.kuang .jinru').clone()
+        jinru.html(name+'进入房间')
+        $('.top').append(jinru)
+        $('textarea').attr('disabled',false)
+        
+    }
+    //表情
+    $(document).ready(function(){
+        sdEditorEmoj.Init(emojiconfig);
+        sdEditorEmoj.setEmoji({type:'input',id:"textarea"});
+    })
+</script>
+</html>

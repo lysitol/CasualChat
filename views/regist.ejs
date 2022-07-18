@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+<body>
+    <form action="/doregist" method="post">
+        用户名<input type="text" name="username"><br>
+        密码<input type="password" name="password"><br>
+        重复密码<input type="password" ><br>
+        <input type="button" value="检查" class="send btn btn-success">
+        <input type="submit" value="注册" disabled="true" class="btn btn-success">
+
+    </form>
+
+    
+</body>
+<script src="/jquery/dist/jquery.min.js"></script>
+<script>
+    
+
+    $('.send').on('click',function(){
+        if($('form input:eq(1)').val()===$('form input:eq(2)').val() ){
+            alert('可以注册')
+            $('form input:eq(4)').attr('disabled',false)
+        }else{
+            alert('密码不一致')
+        }
+    })
+    $('input').change(function(){
+        $('form input:eq(4)').attr('disabled',true)
+    })
+</script>
+
+</html>
